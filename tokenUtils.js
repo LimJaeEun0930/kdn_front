@@ -11,12 +11,36 @@ const showToast = (text) =>{
         text1: text,
       });
 };
+export const register = (email,password,name,phoneNumber,navigation) => { //회원가입버튼 클릭시 호출
+  axios.post(`${URL}/register`,
+  {
+    "email":email,
+    "password":password,
+    "name":name,
+    "phoneNumber":phoneNumber
+  })
+  .then(res =>{//회원가입 성공시
+        if (res.status === 200){
+          navigation.navigate('LoginPage');
+        }}
+  ). catch(error =>{
+        if(error.response.status === 409){
+            showToast(error.response.data)
+        }
+        else{
+            showToast("알수없는 오류")
+        } 
+      
+  })
 
+};
+
+  
 export const getTokens = (email, password, navigation) => { //로그인버튼 클릭시 호출
     axios.post(`${URL}/login`,
     {
-      "userId":email,
-      "userpw":password
+      "email":email,
+      "password":password
     })
     .then(res =>{{
           //accessToken, refreshToken 로컬에 저장
@@ -41,7 +65,7 @@ export const getTokens = (email, password, navigation) => { //로그인버튼 �
     })
 };
 
-const getTokenFromLocal = async () => { // verifyTokens에서 호출되는 함수
+const getTokenFromLocal = async () => { // verifyTokens에서 호출되는 함수(밑에있음)
   try {
     const value = await AsyncStorage.getItem("Tokens");
     if (value !== null) {
@@ -61,7 +85,7 @@ export const verifyTokens = async (navigation) => { //SplashPage에서 uesEffect
 
   // 최초 접속
   if (Token === null){
-    navigation.reset({routes: [{name: "AuthPage"}]});//로그인페이지>
+    navigation.reset({routes: [{name: "LoginPage"}]});//로그인페이지>
   }
   // 로컬 스토리지에 Token데이터가 있으면 -> 토큰들을 헤더에 넣어 검증 
   else{
@@ -85,7 +109,7 @@ export const verifyTokens = async (navigation) => { //SplashPage에서 uesEffect
 
       // accessToken 만료, refreshToken 만료 -> 로그인 페이지
       if(code === 401){
-        navigation.reset({routes: [{name: "AuthPage"}]});
+        navigation.reset({routes: [{name: "LoginPage"}]});
       }
       // accessToken 정상, refreshToken 정상 -> 자동 로그인
       else{

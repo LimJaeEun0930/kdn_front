@@ -1,20 +1,32 @@
 import { View, StyleSheet,TextInput,Button} from 'react-native';
-import { getTokens } from './tokenUtils';
+import { register } from './tokenUtils';
 import { useState } from "react";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-const AuthPage = ({navigation}) => {
+
+const RegisterPage = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    
+    const [passwordConfirm, setPasswordConfirm] = useState(''); // [1
+    const [pw1equlsPw2, setPw1equlsPw2] = useState(false); // [2
+    const [name, setName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+
+
     const onChangeEmail = (email) => setEmail(email);
     const onChangePw = (pw) => setPassword(pw);
+    const onChangePwConfirm = (passwordConfirm) => setPasswordConfirm(passwordConfirm); // [3
+    const onChangeName = (name) => setName(name);
+    const onChangePhoneNumber = (phoneNumber) => setPhoneNumber(phoneNumber);
 
-    const onPressLoginButton = () =>{
-        getTokens(email, password, navigation);
-    }
+    
 
     const onPressButton = () =>{
-      navigation.navigate('SignUpPage');
+        if (password === passwordConfirm){
+            register(email, password,name,password, navigation);
+        }
+        else{
+            alert("비밀번호를 확인해주세요.");
+        }
       }
    
 
@@ -36,7 +48,28 @@ const AuthPage = ({navigation}) => {
         placeholder='Password'
         />
 
-        <Button onPress={onPressLoginButton} title="Sign in"/>
+        <TextInput
+        style={styles.input}
+        value={passwordConfirm}
+        onChangeText={onChangePwConfirm}
+        secureTextEntry={true}
+        placeholder='Password Confirm'
+        />
+
+        <TextInput
+        style={styles.input}
+        value={name}
+        onChangeText={onChangeName}
+        placeholder='Name'
+        />
+
+        <TextInput
+        style={styles.input}
+        value={phoneNumber}
+        onChangeText={onChangePhoneNumber}
+        placeholder='Phone Number'
+        />
+
         <Button onPress={onPressButton} title="Create Account" />
       </View>
       
@@ -75,4 +108,4 @@ const styles = StyleSheet.create({
       color: 'white',
   },
 })
-export default AuthPage; 
+export default RegisterPage; 
